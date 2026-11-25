@@ -6,11 +6,16 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+RUN groupadd --system appgroup && \
+    useradd --system --gid appgroup --create-home appuser
+
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app/ ./app/
+COPY --chown=appuser:appgroup app/ ./app/
+
+USER appuser
 
 EXPOSE 5000
 
