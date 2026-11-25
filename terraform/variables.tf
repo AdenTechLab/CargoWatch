@@ -16,3 +16,8 @@ variable "project_name" {
   type        = string
   default     = "cargowatch"
 }
+
+variable "allowed_ip" {
+  description = "Approved public IP address for CargoWatch access"
+  type        = string
+}
