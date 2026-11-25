@@ -37,7 +37,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform init -backend=false
+        run: terraform init -input=false
 
       - name: Terraform Plan
         run: terraform plan -input=false
