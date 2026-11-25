@@ -1,4 +1,9 @@
 
+import {
+  to = aws_ecr_repository.cargowatch
+  id = "cargowatch"
+}
+
 data "aws_caller_identity" "current" {}
 
 resource "aws_ecr_repository" "cargowatch" {
