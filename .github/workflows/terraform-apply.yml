@@ -34,6 +34,8 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform
+        env:
+          TF_VAR_allowed_ip: ${{ vars.CARGOWATCH_ALLOWED_IP }}
         run: terraform plan -input=false -out=tfplan
 
       - name: Upload Terraform Plan
@@ -73,8 +75,8 @@ jobs:
           name: cargowatch-tfplan
           path: terraform
 
-        - name: Terraform Plan
+      - name: Terraform Apply
         working-directory: terraform
         env:
           TF_VAR_allowed_ip: ${{ vars.CARGOWATCH_ALLOWED_IP }}
-        run: terraform plan -input=false -out=tfplan
+        run: terraform apply -input=false tfplan
