@@ -9,8 +9,8 @@ permissions:
   id-token: write
 
 jobs:
-  apply:
-    name: Apply Terraform Changes
+  plan:
+    name: Review Terraform Changes
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +32,47 @@ jobs:
         working-directory: terraform
         run: terraform init -input=false
 
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargowatch-tfplan
+          path: terraform/tfplan
+
+  apply:
+    name: Apply Approved Changes
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.0
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -input=false
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: cargowatch-tfplan
+          path: terraform
+
       - name: Terraform Apply
         working-directory: terraform
-        run: terraform apply -input=false -auto-approve
+        run: terraform apply -input=false tfplan
