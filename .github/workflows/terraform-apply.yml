@@ -35,9 +35,9 @@ jobs:
       - name: Recover Existing AWS Resources
         working-directory: terraform
         run: |
-          terraform untaint aws_vpc.cargowatch
-          terraform untaint aws_iam_role.ecs_execution
-          terraform untaint aws_cloudwatch_log_group.cargowatch
+          terraform untaint aws_vpc.cargowatch || true
+          terraform untaint aws_iam_role.ecs_execution || true
+          terraform untaint aws_cloudwatch_log_group.cargowatch || true
 
       - name: Terraform Plan
         working-directory: terraform
