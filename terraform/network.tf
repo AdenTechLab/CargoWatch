@@ -61,3 +61,78 @@ resource "aws_route_table_association" "cargowatch_public_b" {
   subnet_id      = aws_subnet.cargowatch_public_b.id
   route_table_id = aws_route_table.cargowatch_public.id
 }
+
+# Security group for private AWS service endpoints
+resource "aws_security_group" "cargowatch_endpoints" {
+  name        = "cargowatch-endpoints-security-group"
+  description = "Allow HTTPS from CargoWatch tasks to private AWS endpoints"
+  vpc_id      = aws_vpc.cargowatch.id
+
+  ingress {
+    description     = "HTTPS from CargoWatch tasks"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.cargowatch.id]
+  }
+
+  egress = []
+
+  tags = {
+    Name = "CargoWatch VPC Endpoints Security Group"
+  }
+}
+
+# Private ECR API endpoint
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id              = aws_vpc.cargowatch.id
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = [aws_subnet.cargowatch_public_a.id]
+  security_group_ids  = [aws_security_group.cargowatch_endpoints.id]
+
+  tags = {
+    Name = "cargowatch-ecr-api-endpoint"
+  }
+}
+
+# Private ECR Docker registry endpoint
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id              = aws_vpc.cargowatch.id
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = [aws_subnet.cargowatch_public_a.id]
+  security_group_ids  = [aws_security_group.cargowatch_endpoints.id]
+
+  tags = {
+    Name = "cargowatch-ecr-dkr-endpoint"
+  }
+}
+
+# Private CloudWatch Logs endpoint
+resource "aws_vpc_endpoint" "logs" {
+  vpc_id              = aws_vpc.cargowatch.id
+  service_name        = "com.amazonaws.${var.aws_region}.logs"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = [aws_subnet.cargowatch_public_a.id]
+  security_group_ids  = [aws_security_group.cargowatch_endpoints.id]
+
+  tags = {
+    Name = "cargowatch-logs-endpoint"
+  }
+}
+
+# S3 gateway endpoint for ECR image layers
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.cargowatch.id
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = [aws_route_table.cargowatch_public.id]
+
+  tags = {
+    Name = "cargowatch-s3-endpoint"
+  }
+}
