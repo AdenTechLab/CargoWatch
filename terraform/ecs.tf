@@ -53,7 +53,7 @@ resource "aws_ecs_task_definition" "cargowatch" {
   container_definitions = jsonencode([
     {
       name      = "cargowatch"
-      image = "${aws_ecr_repository.cargowatch.repository_url}@sha256:e07c1278c2b1b80513b9e949529653483c68008cb76bc93674f67953596b4c3a"
+      image     = "${aws_ecr_repository.cargowatch.repository_url}@sha256:e07c1278c2b1b80513b9e949529653483c68008cb76bc93674f67953596b4c3a"
       essential = true
 
       portMappings = [
