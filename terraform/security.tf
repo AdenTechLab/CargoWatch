@@ -15,7 +15,7 @@ resource "aws_security_group" "cargowatch" {
     from_port   = 5000
     to_port     = 5000
     protocol    = "tcp"
-    cidr_blocks = [var.allowed_ip]
+    cidr_blocks = [trimspace(var.allowed_ip)]
   }
 
   egress = []
