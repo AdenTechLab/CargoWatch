@@ -31,14 +31,7 @@ jobs:
       - name: Terraform Init
         working-directory: terraform
         run: terraform init -input=false
-
-      - name: Recover Existing AWS Resources
-        working-directory: terraform
-        run: |
-          terraform untaint aws_vpc.cargowatch || true
-          terraform untaint aws_iam_role.ecs_execution || true
-          terraform untaint aws_cloudwatch_log_group.cargowatch || true
-
+        
       - name: Terraform Plan
         working-directory: terraform
         run: terraform plan -input=false -out=tfplan
