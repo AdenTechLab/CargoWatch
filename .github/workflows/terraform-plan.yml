@@ -40,4 +40,6 @@ jobs:
         run: terraform init -input=false
 
       - name: Terraform Plan
+        env:
+          TF_VAR_allowed_ip: ${{ vars.CARGOWATCH_ALLOWED_IP }}
         run: terraform plan -input=false
