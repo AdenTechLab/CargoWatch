@@ -28,3 +28,21 @@ output "cloudwatch_log_group" {
   description = "CargoWatch CloudWatch log group"
   value       = aws_cloudwatch_log_group.cargowatch.name
 }
+
+output "vpc_id" {
+  description = "CargoWatch VPC ID"
+  value       = aws_vpc.cargowatch.id
+}
+
+output "public_subnet_ids" {
+  description = "CargoWatch public subnet IDs"
+  value = [
+    aws_subnet.cargowatch_public_a.id,
+    aws_subnet.cargowatch_public_b.id
+  ]
+}
+
+output "internet_gateway_id" {
+  description = "CargoWatch Internet Gateway ID"
+  value       = aws_internet_gateway.cargowatch.id
+}
