@@ -36,5 +36,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ steps.login-ecr.outputs.registry }}/cargowatch:latest
-            ${{ steps.login-ecr.outputs.registry }}/cargowatch:${{ github.sha }}
+            tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
